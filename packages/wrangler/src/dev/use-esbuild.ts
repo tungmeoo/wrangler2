@@ -27,6 +27,7 @@ export function useEsbuild({
 	tsconfig,
 	minify,
 	nodeCompat,
+	betaD1Shims,
 	define,
 	noBundle,
 }: {
@@ -40,6 +41,8 @@ export function useEsbuild({
 	tsconfig: string | undefined;
 	minify: boolean | undefined;
 	nodeCompat: boolean | undefined;
+	betaD1Shims?: string[];
+	noBuild: boolean;
 	noBundle: boolean;
 }): EsbuildBundle | undefined {
 	const [bundle, setBundle] = useState<EsbuildBundle>();
@@ -92,6 +95,7 @@ export function useEsbuild({
 						tsconfig,
 						minify,
 						nodeCompat,
+						betaD1Shims,
 						define,
 						checkFetch: true,
 				  });
@@ -112,7 +116,6 @@ export function useEsbuild({
 					watcher.close();
 				};
 			}
-
 			setBundle({
 				id: 0,
 				entry,
@@ -145,6 +148,7 @@ export function useEsbuild({
 		minify,
 		nodeCompat,
 		define,
+		betaD1Shims,
 	]);
 	return bundle;
 }
