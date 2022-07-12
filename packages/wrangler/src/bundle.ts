@@ -119,6 +119,7 @@ export async function bundleWorker(
 	// like the static asset facade, and other middleware that we
 	// plan on injecting/referencing.
 
+	console.log({ port, pid: process.pid, message: "in bundleWorker" });
 	const result = await esbuild.build({
 		...getEntryPoint(entry.file, serveAssetsFromWorker),
 		bundle: true,
@@ -177,7 +178,7 @@ export async function bundleWorker(
 
 	const entryPointExports = entryPointOutputs[0][1].exports;
 	const bundleType = entryPointExports.length > 0 ? "esm" : "commonjs";
-	console.log({ port, message: "returning bundleWorker" });
+	console.log({ port, pid: process.pid, message: "returning bundleWorker" });
 	return {
 		modules: moduleCollector.modules,
 		resolvedEntryPointPath: path.resolve(

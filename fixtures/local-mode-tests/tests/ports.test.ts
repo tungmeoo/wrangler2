@@ -11,8 +11,14 @@ describe("worker", () => {
 		//since the script is invoked from the directory above, need to specify index.js is in src/
 
 		workers = await Promise.all([
-			wrangler.unstable_dev("src/basicModule.ts") as Worker,
-			wrangler.unstable_dev("src/module.ts") as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8001 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8002 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8003 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8004 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8005 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8006 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8007 }) as Worker,
+			wrangler.unstable_dev("src/basicModule.ts", { port: 8008 }) as Worker,
 		]);
 	});
 

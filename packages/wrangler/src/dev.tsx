@@ -285,6 +285,7 @@ export async function startDev(args: StartDevOptions) {
 	let watcher: ReturnType<typeof watch> | undefined;
 	let port;
 	let rerender: (node: React.ReactNode) => void | undefined;
+	const disableWatcher = true;
 	try {
 		if (args.logLevel) {
 			// we don't define a "none" logLevel, so "error" will do for now.
@@ -303,7 +304,7 @@ export async function startDev(args: StartDevOptions) {
 			{ sendMetrics: config.send_metrics, offline: args.local }
 		);
 
-		if (config.configPath) {
+		if (config.configPath && !disableWatcher) {
 			watcher = watch(config.configPath, {
 				persistent: true,
 			}).on("change", async (_event) => {
@@ -585,7 +586,7 @@ export async function startDev(args: StartDevOptions) {
 		};
 	} finally {
 		await watcher?.close();
-		console.log({ port: port, message: "end of render" });
+		console.log({ port: port, pid: process.pid, message: "end of render" });
 	}
 }
 

@@ -47,7 +47,7 @@ export function useEsbuild({
 	const [bundle, setBundle] = useState<EsbuildBundle>();
 	const { exit } = useApp();
 	useEffect(() => {
-		console.log({ port: port, message: "in useEsbuild" });
+		console.log({ port, pid: process.pid, message: "in useEsbuild" });
 		let stopWatching: (() => void) | undefined = undefined;
 
 		function updateBundle() {
@@ -73,7 +73,7 @@ export function useEsbuild({
 
 		async function build() {
 			if (!destination) return;
-			console.log({ port: port, message: "in useEsbuild - build" });
+			console.log({ port, pid: process.pid, message: "in useEsbuild - build" });
 			const {
 				resolvedEntryPointPath,
 				bundleType,
@@ -98,7 +98,7 @@ export function useEsbuild({
 						define,
 						checkFetch: true,
 				  });
-
+			console.log({ port, pid: process.pid, message: "exiting bundleWorker" });
 			// Capture the `stop()` method to use as the `useEffect()` destructor.
 			stopWatching = stop;
 
@@ -133,7 +133,11 @@ export function useEsbuild({
 		});
 
 		return () => {
-			console.log({ port: port, message: "in useEsbuild - cleanup" });
+			console.log({
+				port,
+				pid: process.pid,
+				message: "in useEsbuild - cleanup",
+			});
 			stopWatching?.();
 		};
 	}, [
@@ -151,5 +155,6 @@ export function useEsbuild({
 		define,
 		port,
 	]);
+	console.log({ port, message: `returning bundle ${bundle?.id}` });
 	return bundle;
 }
