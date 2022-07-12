@@ -18,6 +18,7 @@ export type EsbuildBundle = {
 };
 
 export function useEsbuild({
+	port,
 	entry,
 	destination,
 	jsxFactory,
@@ -30,6 +31,7 @@ export function useEsbuild({
 	define,
 	noBundle,
 }: {
+	port: number;
 	entry: Entry;
 	destination: string | undefined;
 	jsxFactory: string | undefined;
@@ -45,6 +47,7 @@ export function useEsbuild({
 	const [bundle, setBundle] = useState<EsbuildBundle>();
 	const { exit } = useApp();
 	useEffect(() => {
+		console.log({ port: port, message: "in useEsbuild" });
 		let stopWatching: (() => void) | undefined = undefined;
 
 		function updateBundle() {
@@ -70,7 +73,7 @@ export function useEsbuild({
 
 		async function build() {
 			if (!destination) return;
-
+			console.log({ port: port, message: "in useEsbuild - build" });
 			const {
 				resolvedEntryPointPath,
 				bundleType,
@@ -83,7 +86,7 @@ export function useEsbuild({
 						bundleType: entry.format === "modules" ? "esm" : "commonjs",
 						stop: undefined,
 				  }
-				: await bundleWorker(entry, destination, {
+				: await bundleWorker(port, entry, destination, {
 						serveAssetsFromWorker,
 						jsxFactory,
 						jsxFragment,
@@ -130,6 +133,7 @@ export function useEsbuild({
 		});
 
 		return () => {
+			console.log({ port: port, message: "in useEsbuild - cleanup" });
 			stopWatching?.();
 		};
 	}, [
@@ -145,6 +149,7 @@ export function useEsbuild({
 		minify,
 		nodeCompat,
 		define,
+		port,
 	]);
 	return bundle;
 }

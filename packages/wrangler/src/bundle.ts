@@ -49,6 +49,7 @@ const checkForNodeBuiltinsPlugin = {
  * Generate a bundle for the worker identified by the arguments passed in.
  */
 export async function bundleWorker(
+	port: number,
 	entry: Entry,
 	destination: string,
 	options: {
@@ -176,7 +177,7 @@ export async function bundleWorker(
 
 	const entryPointExports = entryPointOutputs[0][1].exports;
 	const bundleType = entryPointExports.length > 0 ? "esm" : "commonjs";
-
+	console.log({ port, message: "returning bundleWorker" });
 	return {
 		modules: moduleCollector.modules,
 		resolvedEntryPointPath: path.resolve(

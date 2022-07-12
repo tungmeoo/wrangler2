@@ -378,6 +378,7 @@ See https://developers.cloudflare.com/workers/platform/compatibility-dates for m
 					stop: undefined,
 			  }
 			: await bundleWorker(
+					-1,
 					props.entry,
 					typeof destination === "string" ? destination : destination.path,
 					{
