@@ -98,8 +98,8 @@ export async function unstable_dev(
 					_: [],
 					$0: "",
 					port: options?.port ?? 0,
-					...options,
 					local: true,
+					...options,
 					onReady: (address, port) => {
 						readyPort = port;
 						readyAddress = address;
@@ -135,8 +135,8 @@ export async function unstable_dev(
 					showInteractiveDevSession: false,
 					_: [],
 					$0: "",
-					...options,
 					local: true,
+					...options,
 					onReady: (address, port) => {
 						readyPort = port;
 						readyAddress = address;
