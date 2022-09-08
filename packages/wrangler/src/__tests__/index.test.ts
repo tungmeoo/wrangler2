@@ -36,6 +36,7 @@ describe("wrangler", () => {
 			  wrangler publish [script]    🆙 Publish your Worker to Cloudflare.
 			  wrangler tail [worker]       🦚 Starts a log tailing session for a published Worker.
 			  wrangler secret              🤫 Generate a secret that can be referenced in a Worker
+			  wrangler secrets:bulk        Bulk upload secrets for a Worker
 			  wrangler kv:namespace        🗂️  Interact with your Workers KV Namespaces
 			  wrangler kv:key              🔑 Individually manage Workers KV key-value pairs
 			  wrangler kv:bulk             💪 Interact with multiple Workers KV key-value pairs at once
@@ -75,6 +76,7 @@ describe("wrangler", () => {
 			  wrangler publish [script]    🆙 Publish your Worker to Cloudflare.
 			  wrangler tail [worker]       🦚 Starts a log tailing session for a published Worker.
 			  wrangler secret              🤫 Generate a secret that can be referenced in a Worker
+			  wrangler secrets:bulk        Bulk upload secrets for a Worker
 			  wrangler kv:namespace        🗂️  Interact with your Workers KV Namespaces
 			  wrangler kv:key              🔑 Individually manage Workers KV key-value pairs
 			  wrangler kv:bulk             💪 Interact with multiple Workers KV key-value pairs at once
@@ -130,7 +132,7 @@ describe("wrangler", () => {
 			Commands:
 			  wrangler secret put <key>     Create or update a secret variable for a Worker
 			  wrangler secret delete <key>  Delete a secret variable from a Worker
-			  wrangler secret list          List all secrets for a Worker
+			  wrangler secret list          🗄️ List all secrets for a Worker
 
 			Flags:
 			  -c, --config   Path to .toml configuration file  [string]
