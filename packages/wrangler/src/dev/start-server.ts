@@ -5,7 +5,12 @@ import * as path from "node:path";
 import onExit from "signal-exit";
 import tmp from "tmp-promise";
 import { bundleWorker } from "../bundle";
-import { registerWorker } from "../dev-registry";
+import {
+	getRegisteredWorkers,
+	registerWorker,
+	startWorkerRegistry,
+	stopWorkerRegistry,
+} from "../dev-registry";
 import { runCustomBuild } from "../entry";
 import { logger } from "../logger";
 import { waitForPortToBeAvailable } from "../proxy";
@@ -17,6 +22,7 @@ import {
 import { validateDevProps } from "./validate-dev-props";
 
 import type { Config } from "../config";
+import type { WorkerRegistry } from "../dev-registry";
 import type { Entry } from "../entry";
 import type { DevProps, DirectorySyncResult } from "./dev";
 import type { LocalProps } from "./local";
@@ -48,6 +54,26 @@ export async function startDevServer(
 			throw new Error("Failed to create temporary directory.");
 		}
 
+		//start the worker registry
+		startWorkerRegistry().catch((err) => {
+			logger.error("failed to start worker registry", err);
+		});
+		const registeredWorkers = await getRegisteredWorkers();
+		const serviceNames = (props.bindings.services || []).map(
+			(serviceBinding) => serviceBinding.service
+		);
+		const durableObjectServices = (
+			props.bindings.durable_objects || { bindings: [] }
+		).bindings.map((durableObjectBinding) => durableObjectBinding.script_name);
+
+		//get some workers
+		const workerDefinitions = Object.fromEntries(
+			Object.entries(registeredWorkers || {}).filter(
+				([key, _value]) =>
+					serviceNames.includes(key) || durableObjectServices.includes(key)
+			)
+		);
+
 		//implement a react-free version of useEsbuild
 		const bundle = await runEsbuild({
 			entry: props.entry,
@@ -64,7 +90,9 @@ export async function startDevServer(
 			define: props.define,
 			noBundle: props.noBundle,
 			assets: props.assetsConfig,
+			workerDefinitions,
 			services: props.bindings.services,
+			firstPartyWorkerDevFacade: props.firstPartyWorker,
 		});
 
 		//run local now
@@ -90,13 +118,14 @@ export async function startDevServer(
 			inspect: props.inspect,
 			onReady: props.onReady,
 			enablePagesAssetsServiceBinding: props.enablePagesAssetsServiceBinding,
-			usageModel: undefined,
-			workerDefinitions: undefined,
+			usageModel: props.usageModel,
+			workerDefinitions,
 		});
 
 		return {
 			stop: async () => {
 				stop();
+				await stopWorkerRegistry();
 			},
 			inspectorUrl,
 		};
@@ -129,6 +158,9 @@ async function runEsbuild({
 	nodeCompat,
 	define,
 	noBundle,
+	workerDefinitions,
+	services,
+	firstPartyWorkerDevFacade,
 }: {
 	entry: Entry;
 	destination: string | undefined;
@@ -143,6 +175,8 @@ async function runEsbuild({
 	minify: boolean | undefined;
 	nodeCompat: boolean | undefined;
 	noBundle: boolean;
+	workerDefinitions: WorkerRegistry;
+	firstPartyWorkerDevFacade: boolean | undefined;
 }): Promise<EsbuildBundle | undefined> {
 	if (!destination) return;
 
@@ -174,9 +208,9 @@ async function runEsbuild({
 					// disable the cache in dev
 					bypassCache: true,
 				},
-				services: undefined,
-				workerDefinitions: undefined,
-				firstPartyWorkerDevFacade: undefined,
+				workerDefinitions,
+				services,
+				firstPartyWorkerDevFacade,
 		  });
 
 	return {
