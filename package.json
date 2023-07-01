@@ -137,7 +137,7 @@
 		"@changesets/changelog-github": "^0.4.5",
 		"@changesets/cli": "^2.22.0",
 		"@types/jest": "^28.1.6",
-		"@types/node": "^16.11.11",
+		"@types/node": "^16.18.35",
 		"@typescript-eslint/eslint-plugin": "^5.18.0",
 		"@typescript-eslint/parser": "^5.18.0",
 		"cross-env": "^7.0.3",
